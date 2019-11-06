@@ -10,10 +10,13 @@ namespace WebScrapper
 {
     class Program
     {
+        private ETLHelper etlHelper;
+
         static void Main(string[] args)
         {
-            string input;
             var program = new Program();
+            program.etlHelper = new ETLHelper();
+            string input;
             while (true)
             {
                 MenuProvider.PrintMenu();
@@ -38,7 +41,6 @@ namespace WebScrapper
 
         private void PerformStep(AppState step)
         {
-            var etlHelper = new ETLHelper();
             var appState = RuntimeInfo.AppState;
 
             switch (step)
@@ -58,11 +60,17 @@ namespace WebScrapper
                     else
                         WriteErrorMessage();
                     break;
+                case AppState.ETL:
+                    etlHelper.PerformEtl();
+                    break;
                 case AppState.ExportToCSV:
                     CSVExporter.ExportToCSV();
                     break;
                 case AppState.Quit:
                     ExitApp();
+                    break;
+                default:
+                    Console.WriteLine("Podano niepoprawna wartosc. Prosze sprobowac ponownie.");
                     break;
             }
 

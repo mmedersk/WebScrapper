@@ -26,6 +26,12 @@ namespace WebScrapper
             Console.WriteLine("performing logging");
             RuntimeInfo.AppState = AppState.Log;
         }
+
+        public void PerformEtl()
+        {
+            Console.WriteLine("performing ETL");
+            RuntimeInfo.AppState = AppState.ETL;
+        }
     }
 
     public enum AppState
@@ -34,6 +40,7 @@ namespace WebScrapper
         Extract,
         Transform,
         Log,
+        ETL,
         ExportToCSV,
         Quit
     }
