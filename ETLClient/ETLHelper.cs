@@ -9,9 +9,16 @@ namespace WebScrapper
 {
     public class ETLHelper
     {
+        private WebScrapper _scrapper;
+        public ETLHelper()
+        {
+            _scrapper = new WebScrapper();
+        }
         public void Extract()
         {
             Console.WriteLine("performing extraction");
+            var results = _scrapper.GetListings();
+            Console.WriteLine($"Scrapped {results.Count} listings of otodom.pl");
             RuntimeInfo.AppState = AppState.Extract;
         }
 
