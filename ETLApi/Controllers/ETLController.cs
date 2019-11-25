@@ -1,22 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Collections.Generic;
 using System.Web.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ETLApi.Controllers
 {
     public class ETLController : ApiController
     {
-        [Route("api/ETL/Extract/{city}/{numberOfAds:int}")]
-        [HttpGet]
-        public string Get(string city, int numberOfAds)
+        [Route("ETL/Extract")]
+        [HttpPost]
+        public IHttpActionResult Get(JsonBodyModel model)
         {
-            var scrapper = new ETLHandler.WebScrapper(city, numberOfAds);
-            return scrapper.GetRawHtml();
+            var scrapper = new ETLHandler.WebScrapper(model.url_adress);
+
+            var result = new ResultModel()
+            {
+                HtmlResult = scrapper.GetRawHtml()
+            };
+
+            return Ok(result);
         }
-        [Route("api/ETL/Transform")]
+        [Route("ETL/Transform")]
         [HttpGet]
         public string Transform()
         {
@@ -25,20 +29,15 @@ namespace ETLApi.Controllers
 
             return $"transformed {results.Count} results";
         }
+    }
 
-        // POST: api/ETL
-        public void Post([FromBody]string value)
-        {
-        }
+    public class JsonBodyModel
+    {
+        public string url_adress { get; set; }
+    }
 
-        // PUT: api/ETL/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/ETL/5
-        public void Delete(int id)
-        {
-        }
+    class ResultModel
+    {
+        public string HtmlResult { get; set; }
     }
 }
