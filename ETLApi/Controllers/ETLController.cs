@@ -5,9 +5,10 @@ using Newtonsoft.Json.Linq;
 
 namespace ETLApi.Controllers
 {
+    
     public class ETLController : ApiController
     {
-        [Route("ETL/Extract")]
+        [Route("api/ETL/Extract")]
         [HttpPost]
         public IHttpActionResult Get(JsonBodyModel model)
         {
@@ -20,7 +21,7 @@ namespace ETLApi.Controllers
 
             return Ok(result);
         }
-        [Route("ETL/Transform")]
+        [Route("api/ETL/Transform")]
         [HttpGet]
         public string Transform()
         {

@@ -74,10 +74,10 @@ namespace ETLHandler
                     break;
             }
 
-            return product.Descendants(attribute)
+            return product?.Descendants(attribute)
                 .Where(x => x.GetAttributeValue("class", "")
                     .Equals(itemDetail))
-                .First()
+                .FirstOrDefault()?
                 .InnerText;
         }
     }

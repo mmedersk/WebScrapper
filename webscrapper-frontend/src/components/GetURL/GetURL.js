@@ -48,12 +48,15 @@ export default function GetURL() {
     }
       
     function postUrl(url) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://localhost:54985/" , true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify({
+        axios.post('http://localhost:54985/api/etl/extract', {
             url_adress: url
-        }));
+        })
+        .then((response) => {
+            console.log(response);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
     }
 
     function getAfterTransform() {
@@ -61,12 +64,13 @@ export default function GetURL() {
     }
       
     const fetchData = () => {
-        axios.get("http://localhost:54985/api/etl/transform").then((resp) => {
-            console.log("resp",resp);
-            setTransfrom(resp);
+        axios.get('http://localhost:54985/api/etl/transform')
+        .then(response => {
+            console.log(response.data);
+            setTransfrom(response.data)
         })
-        .catch((error) => {
-          console.log(error, "catch the hoop")
+        .catch(error => {
+            console.log(error);
         })
     }
 
