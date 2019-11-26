@@ -1,6 +1,7 @@
-import React , { useEffect, useState } from 'react';
+import React , { useState } from 'react';
 import { TextField, Button } from '@material-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import axios from 'axios';
 
 const useStyles = makeStyles(theme =>
     createStyles({
@@ -60,19 +61,9 @@ export default function GetURL() {
     }
       
     const fetchData = () => {
-        fetch("http://localhost:54985/api/etl/extract/miasto/liczba", {
-          method: "GET",
-          dataType: "JSON",
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-          }
-        })
-        .then((resp) => {
-          return resp.json()
-        }) 
-        .then((data) => {
-            console.log("fetchData",data)
-          this.setState({ suggestion: data.suggestion })                    
+        axios.get("http://localhost:54985/api/etl/transform").then((resp) => {
+            console.log("resp",resp);
+            setTransfrom(resp);
         })
         .catch((error) => {
           console.log(error, "catch the hoop")
