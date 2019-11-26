@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace ETLHandler
@@ -11,10 +10,9 @@ namespace ETLHandler
         private string url;
         private HttpClient _httpClient;
 
-        public WebScrapper(string city, int numberOfAds)
+        public WebScrapper(string url)
         {
-            url = $"https://www.otodom.pl/wynajem/mieszkanie/{city}/?search%5Bregion_id%5D=7&search%5Bsubregion_" +
-                  $"id%5D=197&search%5Bcity_id%5D=26&search%5Bdist%5D=5&nrAdsPerPage={numberOfAds}";
+            this.url = url;
             _httpClient = new HttpClient();
         }
 
