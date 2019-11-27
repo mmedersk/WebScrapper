@@ -7,18 +7,18 @@ namespace ETLHandler
     public class WebScrapper
     {
         // otodom.pl
-        private string url;
+        private readonly string _url;
         private HttpClient _httpClient;
 
         public WebScrapper(string url)
         {
-            this.url = url;
+            this._url = url;
             _httpClient = new HttpClient();
         }
 
         public string GetRawHtml()
         {
-            var html = _httpClient.GetStringAsync(url);
+            var html = _httpClient.GetStringAsync(_url);
             Task.WaitAny(html);
             SaveRawHtmlToText(html.Result);
             return html.Result;
