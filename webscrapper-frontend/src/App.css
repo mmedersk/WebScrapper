@@ -20,3 +20,16 @@
 .realative-wrapper.opacity div:first-of-type{
   opacity: 1;
 }
+
+.alert {
+  color: red;
+  font-size: 12px;
+  padding: 0 8px;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s all ease-in-out
+} 
+.alert.invisible {
+  opacity: 1;
+  visibility: visible;
+}

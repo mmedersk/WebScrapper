@@ -39,12 +39,13 @@ const useStyles = makeStyles(theme =>
       },
       wrapper: {
           position: 'relative',
-      }
+      },
     }),
 );
 
 export default function GetURL() {
     const [transfrom, setTransfrom] = useState([]);
+    const [alert, setAlert] = useState(false);
     const [t, setT] = useState(true);
     const [l, setL] = useState(true);
     const [loader, setLoader] = useState(false);
@@ -55,7 +56,12 @@ export default function GetURL() {
     function handleSubmit(e){
         e.preventDefault();
         const url = document.querySelector("#urlAdress").value;
-        postUrl(url)
+        if(url.indexOf("otodom") > 0){
+            postUrl(url);
+            setAlert(false);
+        } else {
+            setAlert(true);
+        }
     }
       
     function postUrl(url) {
@@ -65,6 +71,7 @@ export default function GetURL() {
             url_adress: url
         })
         .then((response) => {
+            console.log(response)
             if(response.status === 200){
                 setExtractStatus(true);
                 setT(false);
@@ -115,6 +122,7 @@ export default function GetURL() {
                         className={classes.textField}
                         margin="normal"
                     />
+                <div className={"alert " + (alert ? 'invisible' : '')}>Url have to be from otodom.pl</div>
                 </div>
                 <div className={classes.buttonWrapper}>
                     <Button type="submit" variant="contained" color="primary" className={classes.button}>
