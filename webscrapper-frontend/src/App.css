@@ -7,3 +7,16 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+.realative-wrapper{
+  position: relative;
+}
+
+.realative-wrapper.opacity div{
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.realative-wrapper.opacity div:first-of-type{
+  opacity: 1;
+}
