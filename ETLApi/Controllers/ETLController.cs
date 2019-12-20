@@ -16,19 +16,19 @@ namespace ETLApi.Controllers
 
             var result = new ResultModel()
             {
-                HtmlResult = scrapper.GetRawHtml()
+                HtmlResult = scrapper.GetRawHtmls()
             };
 
             return Ok(result);
         }
         [Route("api/ETL/Transform")]
         [HttpGet]
-        public string Transform()
+        public IHttpActionResult Transform()
         {
             var transformer = new ETLHandler.TransformationHandler();
             var results = transformer.GetListOfProducts();
 
-            return $"transformed {results.Count} results";
+            return Ok($"transformed {results.Count} results");
         }
     }
 
