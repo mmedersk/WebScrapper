@@ -123,13 +123,37 @@ namespace ETLApi.Controllers
 
         [Route("api/ETL/cleanDb")]
         [HttpGet]
-        public IHttpActionResult CleanDb(List<ListingItemModel> offers)
+        public IHttpActionResult CleanDb()
         {
-            //TODO: zaimplementowac czyszczenie bazy danych
-            var dbHandler = new DatabaseHandler();
-            dbHandler.CleanDb();
+            try
+            {
+                var dbHandler = new DatabaseHandler();
+                dbHandler.CleanDb();
 
-            return Ok();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [Route("api/ETL/getAllRecords")]
+        [HttpGet]
+        public IHttpActionResult GetAllRecords()
+        {
+            try
+            {
+                var dbHandler = new DatabaseHandler();
+                var results = dbHandler.GetAllRecords();
+
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+
         }
     }
 
