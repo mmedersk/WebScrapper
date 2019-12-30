@@ -2,6 +2,7 @@
 using System.Web.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using WebScrapper;
 
 namespace ETLApi.Controllers
 {
@@ -14,21 +15,46 @@ namespace ETLApi.Controllers
         {
             var scrapper = new ETLHandler.WebScrapper(model.url_adress);
 
-            var result = new ResultModel()
-            {
-                HtmlResult = scrapper.GetRawHtml()
-            };
+            var result = scrapper.GetRawHtmls(needSave: true);
 
-            return Ok(result);
+            return Ok($"Scrapped {result.Count} pages");
         }
+
         [Route("api/ETL/Transform")]
         [HttpGet]
-        public string Transform()
+        public IHttpActionResult Transform()
         {
             var transformer = new ETLHandler.TransformationHandler();
-            var results = transformer.GetListOfProducts();
+            var results = transformer.GetListOfProducts(needSave: true, rawHtmlList: null);
 
-            return $"transformed {results.Count} results";
+            return Ok($"transformed {results.Count} results");
+        }
+
+        [Route("api/ETL/Load")]
+        [HttpGet]
+        public IHttpActionResult Load()
+        {
+            var dbHandler = new DatabaseHandler();
+            dbHandler.Load(null);
+
+            return Ok();
+        }
+
+
+        [Route("api/ETL/fulletl")]
+        [HttpGet]
+        public IHttpActionResult FullETL(JsonBodyModel model)
+        {
+            var scrapper = new ETLHandler.WebScrapper(model.url_adress);
+            var htmlFiles = scrapper.GetRawHtmls(needSave: false);
+
+            var transformer = new ETLHandler.TransformationHandler();
+            var transformationResults = transformer.GetListOfProducts(needSave: false, rawHtmlList: htmlFiles);
+
+            var dbHandler = new DatabaseHandler();
+            dbHandler.Load(transformationResults);
+
+            return Ok();
         }
 
 
