@@ -35,11 +35,10 @@ namespace ETLHandler
                             .Equals("css-jcl595"))
                         .Single();
 
-                    var detailsSection = htmlDoc.DocumentNode.Descendants("div")
+                    var detailsSection = htmlDoc.DocumentNode.Descendants("section")
                         .Where(x => x.GetAttributeValue("class", "")
-                            .Equals("css-1kgyoyz-Xt"))
-                        .Single()
-                        .FirstChild;
+                            .Equals("section-overview"))
+                        .Single().ChildNodes.First(x => x.Name.Equals("div")).FirstChild;
 
                     results.Add(GetOfferDetails(detailsSection, titleHeader));
                 }
@@ -59,11 +58,10 @@ namespace ETLHandler
                             .Equals("css-jcl595"))
                         .Single();
 
-                    var detailsSection = htmlDoc.DocumentNode.Descendants("div")
+                    var detailsSection = htmlDoc.DocumentNode.Descendants("section")
                         .Where(x => x.GetAttributeValue("class", "")
-                            .Equals("css-1kgyoyz-Xt"))
-                        .Single()
-                        .FirstChild;
+                            .Equals("section-overview"))
+                        .Single().ChildNodes.First(x => x.Name.Equals("div")).FirstChild;
 
                     results.Add(GetOfferDetails(detailsSection, titleHeader));
                 }
@@ -114,16 +112,16 @@ namespace ETLHandler
                     .Where(x => x.GetAttributeValue("class", "")
                         .Equals("css-1vr19r7")).Single().InnerText;
 
-                offer.Area = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Powierzchnia"))?.FirstChild.NextSibling.InnerText;
+                offer.Area = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Powierzchnia"))?.FirstChild.NextSibling.InnerText ?? "Brak Informacji";
                 offer.Bond = ToIntFromString(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Kaucja"))?.FirstChild.NextSibling.InnerText);
-                offer.BuildingType = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Rodzaj zabudowy"))?.FirstChild.NextSibling.InnerText;
+                offer.BuildingType = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Rodzaj zabudowy"))?.FirstChild.NextSibling.InnerText ?? "Brak Informacji";
                 offer.BuiltIn = ToIntFromString(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Rok budowy"))?.FirstChild.NextSibling.InnerText);
                 offer.Floor = ToIntFromString(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Piętro"))?.FirstChild.NextSibling.InnerText);
                 offer.FloorsInBuilding = ToIntFromString(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Liczba pięter"))?.FirstChild.NextSibling.InnerText);
-                offer.HeatingType = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Ogrzewanie"))?.FirstChild.NextSibling.InnerText;
-                offer.Materials = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Materiał budynku"))?.FirstChild.NextSibling.InnerText;
+                offer.HeatingType = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Ogrzewanie"))?.FirstChild.NextSibling.InnerText ?? "Brak Informacji";
+                offer.Materials = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Materiał budynku"))?.FirstChild.NextSibling.InnerText ?? "Brak Informacji";
                 offer.Rooms = ToIntFromString(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Liczba pokoi"))?.FirstChild.NextSibling.InnerText);
-                offer.Windows = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Okna"))?.FirstChild.NextSibling.InnerText;
+                offer.Windows = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Okna"))?.FirstChild.NextSibling.InnerText ?? "Brak Informacji";
             }
             catch
             {
@@ -141,6 +139,9 @@ namespace ETLHandler
 
         private int ToIntFromString(string text)
         {
+            if (string.IsNullOrEmpty(text))
+                return 0;
+
             var tempArray = text.ToCharArray();
             var stringNoLeters = new StringBuilder();
 

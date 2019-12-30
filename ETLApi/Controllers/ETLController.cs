@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using CommonItems;
 using WebScrapper;
 
 namespace ETLApi.Controllers
@@ -13,31 +13,54 @@ namespace ETLApi.Controllers
         [HttpPost]
         public IHttpActionResult Get(JsonBodyModel model)
         {
-            var scrapper = new ETLHandler.WebScrapper(model.url_adress);
+            try
+            {
+                var scrapper = new ETLHandler.WebScrapper(model.url_adress);
+                var result = scrapper.GetRawHtmls(needSave: true);
 
-            var result = scrapper.GetRawHtmls(needSave: true);
-
-            return Ok($"Scrapped {result.Count} pages");
+                return Ok($"Scrapped {result.Count} pages");
+            }
+            catch(Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
 
         [Route("api/ETL/Transform")]
         [HttpGet]
         public IHttpActionResult Transform()
         {
-            var transformer = new ETLHandler.TransformationHandler();
-            var results = transformer.GetListOfProducts(needSave: true, rawHtmlList: null);
+            try
+            {
+                var transformer = new ETLHandler.TransformationHandler();
+                var results = transformer.GetListOfProducts(needSave: true, rawHtmlList: null);
 
-            return Ok($"transformed {results.Count} results");
+                return Ok($"transformed {results.Count} results");
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
 
         [Route("api/ETL/Load")]
         [HttpGet]
         public IHttpActionResult Load()
         {
-            var dbHandler = new DatabaseHandler();
-            dbHandler.Load(null);
+            try
+            {
+                var dbHandler = new DatabaseHandler();
+                dbHandler.Load(null);
 
-            return Ok();
+                var cleaningHandler = new CleaningHandler();
+                cleaningHandler.DeleteArtifacts();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
 
 
@@ -45,16 +68,60 @@ namespace ETLApi.Controllers
         [HttpGet]
         public IHttpActionResult FullETL(JsonBodyModel model)
         {
-            var scrapper = new ETLHandler.WebScrapper(model.url_adress);
-            var htmlFiles = scrapper.GetRawHtmls(needSave: false);
+            try
+            {
+                var scrapper = new ETLHandler.WebScrapper(model.url_adress);
+                var htmlFiles = scrapper.GetRawHtmls(needSave: false);
 
-            var transformer = new ETLHandler.TransformationHandler();
-            var transformationResults = transformer.GetListOfProducts(needSave: false, rawHtmlList: htmlFiles);
+                var transformer = new ETLHandler.TransformationHandler();
+                var transformationResults = transformer.GetListOfProducts(needSave: false, rawHtmlList: htmlFiles);
 
-            var dbHandler = new DatabaseHandler();
-            dbHandler.Load(transformationResults);
+                var dbHandler = new DatabaseHandler();
+                dbHandler.Load(transformationResults);
 
-            return Ok();
+                var cleaningHandler = new CleaningHandler();
+                cleaningHandler.DeleteArtifacts();
+
+                return Ok(transformationResults);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [Route("api/ETL/exportToCsv")]
+        [HttpGet]
+        public IHttpActionResult ExportToCSV(List<ListingItemModel> offers)
+        {
+            try
+            {
+                var csvHelper = new CSVHandler();
+                csvHelper.ExportToCSV(offers);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+        [Route("api/ETL/exportSingleToTxt")]
+        [HttpGet]
+        public IHttpActionResult ExportSingleToTxt(ListingItemModel offer)
+        {
+            try
+            {
+                var csvHelper = new CSVHandler();
+                csvHelper.ExportSingleToTxt(offer);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
 
 
