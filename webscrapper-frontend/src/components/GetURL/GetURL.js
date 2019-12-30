@@ -94,6 +94,7 @@ export default function GetURL() {
         setLoader(true);
         axios.get('http://localhost:54985/api/etl/transform')
         .then(response => {
+            console.log("response", response)
             if(response.status === 200){
                 setTransfrom(response.data);
                 setL(false);

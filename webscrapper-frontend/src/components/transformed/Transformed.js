@@ -26,6 +26,8 @@ export default function Transformed(props) {
         setData(props.transformed)
     }, [props.transformed]);
 
+    console.log('data transformed', data)
+
     return (
         <div className={classes.container}>
             <h4 className={classes.header}>Transform detail:</h4>

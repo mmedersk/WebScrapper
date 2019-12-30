@@ -49,13 +49,13 @@ namespace ETLApi.Controllers
         {
             try
             {
-                var dbHandler = new DatabaseHandler();
-                dbHandler.Load(null);
+                var dbHandler = new DatabaseHandler(null);
+                var offersInDb = dbHandler.Load();
 
                 var cleaningHandler = new CleaningHandler();
                 cleaningHandler.DeleteArtifacts();
 
-                return Ok();
+                return Ok(offersInDb);
             }
             catch (Exception ex)
             {
@@ -76,13 +76,10 @@ namespace ETLApi.Controllers
                 var transformer = new ETLHandler.TransformationHandler();
                 var transformationResults = transformer.GetListOfProducts(needSave: false, rawHtmlList: htmlFiles);
 
-                var dbHandler = new DatabaseHandler();
-                dbHandler.Load(transformationResults);
+                var dbHandler = new DatabaseHandler(transformationResults);
+                var offersInDb = dbHandler.Load();
 
-                var cleaningHandler = new CleaningHandler();
-                cleaningHandler.DeleteArtifacts();
-
-                return Ok(transformationResults);
+                return Ok(offersInDb);
             }
             catch (Exception ex)
             {
@@ -124,7 +121,16 @@ namespace ETLApi.Controllers
             }
         }
 
+        [Route("api/ETL/cleanDb")]
+        [HttpGet]
+        public IHttpActionResult CleanDb(List<ListingItemModel> offers)
+        {
+            //TODO: zaimplementowac czyszczenie bazy danych
+            var dbHandler = new DatabaseHandler();
+            dbHandler.CleanDb();
 
+            return Ok();
+        }
     }
 
     public class JsonBodyModel
