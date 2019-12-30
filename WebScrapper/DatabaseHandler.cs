@@ -40,6 +40,12 @@ namespace WebScrapper
 
         }
 
+        //TODO: zaczytac wszystkie recordy z DB i zwrocic jako liste
+        public List<ListingItemModel> GetAllRecords()
+        {
+            return null;
+        }
+
         private List<ListingItemModel> GetOffersFromJson()
         {
             var offers = new List<ListingItemModel>();
@@ -52,5 +58,7 @@ namespace WebScrapper
                 return offers;
             }
         }
+
+        
     }
 }
