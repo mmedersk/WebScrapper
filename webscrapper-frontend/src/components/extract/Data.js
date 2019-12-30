@@ -4,10 +4,12 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(theme =>
     createStyles({
         success: {
-            color: 'green'
+            color: 'green',
+            textAlign: 'center'
         },
         failed: {
-            color: 'red'
+            color: 'red',
+            textAlign: 'center'
         },
     }),
 );

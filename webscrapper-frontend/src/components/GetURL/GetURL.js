@@ -39,27 +39,37 @@ const useStyles = makeStyles(theme =>
       },
       wrapper: {
           position: 'relative',
-      }
+      },
     }),
 );
 
 export default function GetURL() {
     const [transfrom, setTransfrom] = useState([]);
+    const [alert, setAlert] = useState(false);
     const [t, setT] = useState(true);
     const [l, setL] = useState(true);
+    const [e, setE] = useState(true);
     const [loader, setLoader] = useState(false);
     const [extractStatus, setExtractStatus] = useState();
-    const [details, setdetails] = useState();
+    const [details, setDetails] = useState();
     const classes = useStyles();
 
     function handleSubmit(e){
         e.preventDefault();
         const url = document.querySelector("#urlAdress").value;
-        postUrl(url)
+        if(url.indexOf("otodom") > 0){
+            postUrl(url);
+            setAlert(false);
+        } else {
+            setAlert(true);
+        }
     }
       
     function postUrl(url) {
-        setT(true)
+        setExtractStatus(null);
+        setTransfrom(null);
+        setT(true);
+        setL(true);
         setLoader(true);
         axios.post('http://localhost:54985/api/etl/extract', {
             url_adress: url
@@ -101,11 +111,84 @@ export default function GetURL() {
 
     function getAfterLoad() {
         setLoader(true);
+        axios.get('http://localhost:54985/api/etl/load')
+        .then(response => {
+            if(response.status === 200){
+                setDetails(response.data);
+                setLoader(false);
+                setE(false);
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            setLoader(false);
+        })
+    }
+
+    function fullETLProcess() {
+        setExtractStatus(null);
+        setTransfrom(null);
+        setT(true);
+        setL(true);
+        setLoader(true);
+        axios.post('http://localhost:54985/api/etl/extract', {
+            url_adress: document.querySelector("#urlAdress").value
+        })
+        .then((response) => {
+            if(response.status === 200){
+                setExtractStatus(true);
+                axios.get('http://localhost:54985/api/etl/transform')
+                .then(response => {
+                    if(response.status === 200){
+                        setTransfrom(response.data);
+                        axios.get('http://localhost:54985/api/etl/load')
+                        .then(response => {
+                            if(response.status === 200){
+                                setDetails(response.data);
+                                setLoader(false);
+                                setE(false);
+                            }
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            setLoader(false);
+                        })
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    setLoader(false);
+                })
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+            setExtractStatus(false);
+            setLoader(false);
+        });
+    }
+
+    function exportToCsv() {
+        const data = JSON.stringify(details);
+        axios.get('http://localhost:54985/api/etl/exportToCsv', {
+            headers: {'Content-Type':'application/json'},
+            data
+        })
+        .then((response) => {
+            if(response.status === 200){
+                setT(false);
+                setLoader(false);
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+            setLoader(false);
+        });
     }
 
     return (
         <div>
-            <p className={classes.header}>Prosze podać adress URL domeny <a className={classes.link} target="_blank" href="https://www.otodom.pl/" >Otodom.pl</a></p>
+            <p className={classes.header}>Type URL adress from <a className={classes.link} target="_blank" href="https://www.otodom.pl/" >Otodom.pl</a></p>
             <form className={classes.container} autoComplete="on" onSubmit={handleSubmit}>
                 <div>
                     <TextField
@@ -115,6 +198,7 @@ export default function GetURL() {
                         className={classes.textField}
                         margin="normal"
                     />
+                <div className={"alert " + (alert ? 'invisible' : '')}>Url have to be from otodom.pl</div>
                 </div>
                 <div className={classes.buttonWrapper}>
                     <Button type="submit" variant="contained" color="primary" className={classes.button}>
@@ -126,10 +210,10 @@ export default function GetURL() {
                     <Button variant="contained" disabled={l} color="primary" className={classes.button} onClick={getAfterLoad}>
                         Load
                     </Button> 
-                    <Button variant="contained" color="primary" className={classes.button}>
+                    <Button variant="contained" color="primary" className={classes.button} onClick={fullETLProcess}>
                         ETL
                     </Button> 
-                    <Button variant="contained" disabled color="primary" className={classes.button}>
+                    <Button variant="contained" disabled={e} color="primary" className={classes.button} onClick={exportToCsv}>
                         Export to .csv
                     </Button> 
                 </div>
