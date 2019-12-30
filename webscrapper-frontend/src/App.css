@@ -33,3 +33,15 @@
   opacity: 1;
   visibility: visible;
 }
+
+#main-table table thead tr th:first-of-type{
+  padding-left: 24px;
+}
+
+#main-table table tbody tr td:first-of-type{
+  padding-left: 24px!important;
+}
+
+#main-table table tbody tr td:last-of-type{
+  padding-left: 24px;
+}

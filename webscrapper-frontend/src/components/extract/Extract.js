@@ -32,8 +32,6 @@ export default function Extract(props) {
         }
     }, [props.extract]);
 
-    console.log("data extract", data);
-
     return (
         <div className={classes.container}>
             <h4 className={classes.header}>Extract detail:</h4>

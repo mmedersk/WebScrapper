@@ -25,7 +25,7 @@ export default function Details(props) {
     useEffect(() => {
         setData(props.details)
     }, [props.details]);
-
+    
     return (
         <div className={classes.container}>
             <h4 className={classes.header}>Data:</h4>
