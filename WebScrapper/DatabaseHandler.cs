@@ -11,12 +11,33 @@ namespace WebScrapper
 {
     public class DatabaseHandler
     {
-        public void Load(List<ListingItemModel> offers)
+        private List<ListingItemModel> _offers;
+
+        public DatabaseHandler(List<ListingItemModel> offers)
         {
             if (offers == null)
             {
-                offers = GetOffersFromJson();
+                _offers = GetOffersFromJson();
             }
+            else
+            {
+                this._offers = offers;
+            }
+        }
+
+        public DatabaseHandler()
+        { }
+
+        //TODO: Wrzucic oferty do DB i zwrocic tylko te oferty ktore zostaly wrzucone do DB (bez duplikatow)
+        public List<ListingItemModel> Load()
+        {
+            return _offers;
+        }
+
+        //TODO: czyszczenie DB
+        public void CleanDb()
+        {
+
         }
 
         private List<ListingItemModel> GetOffersFromJson()

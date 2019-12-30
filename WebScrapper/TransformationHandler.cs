@@ -125,7 +125,7 @@ namespace ETLHandler
             }
             catch
             {
-                //TODO what to do here
+                //ignore
             }
 
             return offer;
