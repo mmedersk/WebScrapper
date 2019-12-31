@@ -169,10 +169,12 @@ export default function GetURL() {
     }
 
     function exportToCsv() {
-        const data = JSON.stringify(details);
-        axios.get('http://localhost:54985/api/etl/exportToCsv', {
+        details.map(item => {
+            delete item.tableData;
+        })
+        console.log(details);
+        axios.post('http://localhost:54985/api/etl/exportToCsv', details, {
             headers: {'Content-Type':'application/json'},
-            data
         })
         .then((response) => {
             if(response.status === 200){
