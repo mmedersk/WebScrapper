@@ -88,7 +88,7 @@ namespace ETLApi.Controllers
         }
 
         [Route("api/ETL/exportToCsv")]
-        [HttpGet]
+        [HttpPost]
         public IHttpActionResult ExportToCSV(List<ListingItemModel> offers)
         {
             try
@@ -105,7 +105,7 @@ namespace ETLApi.Controllers
         }
 
         [Route("api/ETL/exportSingleToTxt")]
-        [HttpGet]
+        [HttpPost]
         public IHttpActionResult ExportSingleToTxt(ListingItemModel offer)
         {
             try
