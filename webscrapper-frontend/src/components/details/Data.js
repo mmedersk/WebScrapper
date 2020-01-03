@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import MaterialTable from 'material-table';
-import Button from '@material-ui/core/Button';
 import axios from 'axios';
 
 function exportSingleElement(rowData) {
-    delete rowData.tableData;
-    console.log(rowData)
-    axios.post('http://localhost:54985/api/etl/exportSingleToTxt', rowData, {
+    const data = JSON.parse(JSON.stringify(rowData));
+    delete data.tableData;
+    axios.post('http://localhost:54985/api/etl/exportSingleToTxt', data, {
         headers: {'Content-Type': 'application/json'}
     })
     .then((response) => {
-        console.log("Succes")
+        console.log("Succes save")
     })
     .catch((error) => {
         console.log(error);
@@ -40,59 +39,12 @@ export default function Data(props) {
                 columns={header}
                 data={props.data}
                 actions={[
-                    {
-                        onClick: (rowData) => exportSingleElement(rowData)
-                    }
+                  {
+                    icon: 'save',
+                    tooltip: 'Save',
+                    onClick: (event, rowData) => exportSingleElement(rowData)
+                  }
                 ]}
-                components={{
-                    Action: props => (
-                        <Button
-                            color="primary"
-                            variant="contained"
-                            style={{textTransform: 'none'}}
-                            size="small"
-                        >
-                        Export
-                    </Button>
-                    ),
-                }}
-                editable={{
-                    onRowAdd: newData =>
-                      new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                          {
-                            const data = this.state.data;
-                            data.push(newData);
-                            this.setState({ data }, () => resolve());
-                          }
-                          resolve()
-                        }, 1000)
-                      }),
-                    onRowUpdate: (newData, oldData) =>
-                      new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                          {
-                            const data = this.state.data;
-                            const index = data.indexOf(oldData);
-                            data[index] = newData;
-                            this.setState({ data }, () => resolve());
-                          }
-                          resolve()
-                        }, 1000)
-                      }),
-                    onRowDelete: oldData =>
-                      new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                          {
-                            let data = this.state.data;
-                            const index = data.indexOf(oldData);
-                            data.splice(index, 1);
-                            this.setState({ data }, () => resolve());
-                          }
-                          resolve()
-                        }, 1000)
-                      }),
-                  }}
             />
         </div>
     );

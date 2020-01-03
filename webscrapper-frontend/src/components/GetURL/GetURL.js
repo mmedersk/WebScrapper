@@ -49,6 +49,7 @@ export default function GetURL() {
     const [t, setT] = useState(true);
     const [l, setL] = useState(true);
     const [e, setE] = useState(true);
+    const [showData, setShowData] = useState(false);
     const [loader, setLoader] = useState(false);
     const [extractStatus, setExtractStatus] = useState();
     const [details, setDetails] = useState();
@@ -67,6 +68,7 @@ export default function GetURL() {
       
     function postUrl(url) {
         setExtractStatus(null);
+        setShowData(false);
         setTransfrom(null);
         setT(true);
         setL(true);
@@ -117,6 +119,9 @@ export default function GetURL() {
                 setDetails(response.data);
                 setLoader(false);
                 setE(false);
+                setT(true);
+                setL(true);
+                setShowData(true);
             }
         })
         .catch(error => {
@@ -131,6 +136,7 @@ export default function GetURL() {
         setT(true);
         setL(true);
         setLoader(true);
+        setShowData(false);
         axios.post('http://localhost:54985/api/etl/extract', {
             url_adress: document.querySelector("#urlAdress").value
         })
@@ -140,6 +146,7 @@ export default function GetURL() {
                 axios.get('http://localhost:54985/api/etl/transform')
                 .then(response => {
                     if(response.status === 200){
+                        setL(false);
                         setTransfrom(response.data);
                         axios.get('http://localhost:54985/api/etl/load')
                         .then(response => {
@@ -147,6 +154,9 @@ export default function GetURL() {
                                 setDetails(response.data);
                                 setLoader(false);
                                 setE(false);
+                                setT(true);
+                                setL(true);
+                                setShowData(true);
                             }
                         })
                         .catch(error => {
@@ -169,16 +179,17 @@ export default function GetURL() {
     }
 
     function exportToCsv() {
-        details.map(item => {
+        const data = JSON.parse(JSON.stringify(details));
+        data.map(item => {
             delete item.tableData;
         })
-        console.log(details);
-        axios.post('http://localhost:54985/api/etl/exportToCsv', details, {
+        axios.post('http://localhost:54985/api/etl/exportToCsv', data, {
             headers: {'Content-Type':'application/json'},
         })
         .then((response) => {
             if(response.status === 200){
-                setT(false);
+                setT(true);
+                setL(true);
                 setLoader(false);
             }
         })
@@ -224,7 +235,7 @@ export default function GetURL() {
                 <Loader loader={loader}/>
                 <Extract extract={extractStatus}/>
                 <Transformed transformed={transfrom}/>
-                <Details details={details}/>
+                <Details details={details} visible={showData}/>
             </div>
         </div>
     );

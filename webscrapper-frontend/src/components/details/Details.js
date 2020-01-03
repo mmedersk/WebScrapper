@@ -29,7 +29,7 @@ export default function Details(props) {
     return (
         <div className={classes.container}>
             <h4 className={classes.header}>Data:</h4>
-            <Data data={data}/>
+            {props.visible && <Data data={data}/>}
         </div>
     );
 }
