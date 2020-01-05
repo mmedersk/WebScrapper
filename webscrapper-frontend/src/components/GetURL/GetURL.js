@@ -1,6 +1,8 @@
 import React , { useState } from 'react';
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button, Fab, Snackbar, IconButton} from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
+import DeleteIcon from '@material-ui/icons/Delete';
+import CloseIcon from '@material-ui/icons/Close';
 import Transformed from '../transformed/Transformed';
 import Extract from '../extract/Extract';
 import Details from '../details/Details';
@@ -40,6 +42,15 @@ const useStyles = makeStyles(theme =>
       wrapper: {
           position: 'relative',
       },
+      floating: {
+          position: 'fixed',
+          zIndex: '1000',
+          right: '12px',
+          bottom: '12px'
+      },
+      close: {
+        padding: theme.spacing(0.5),
+      },
     }),
 );
 
@@ -53,6 +64,8 @@ export default function GetURL() {
     const [loader, setLoader] = useState(false);
     const [extractStatus, setExtractStatus] = useState();
     const [details, setDetails] = useState();
+    const [open, setOpen] = useState(false);
+    const [message, setMessage] = useState();
     const classes = useStyles();
 
     function handleSubmit(e){
@@ -199,6 +212,37 @@ export default function GetURL() {
         });
     }
 
+    function cleanDb() {
+        setLoader(true);
+        axios.get('http://localhost:54985/api/etl/cleanDb')
+        .then(response => {
+            console.log("response", response);
+            if(response.status === 200){
+                setLoader(false);
+                handleClick();
+                setMessage("Database cleaned.");
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            setLoader(false);
+            handleClick();
+            setMessage("Database not cleaned, try again.");
+        })
+    }
+
+    const handleClick = () => {
+        setOpen(true);
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
+
     return (
         <div>
             <p className={classes.header}>Type URL adress from <a className={classes.link} target="_blank" href="https://www.otodom.pl/" >Otodom.pl</a></p>
@@ -236,6 +280,33 @@ export default function GetURL() {
                 <Extract extract={extractStatus}/>
                 <Transformed transformed={transfrom}/>
                 <Details details={details} visible={showData}/>
+                <Fab color="secondary" className={classes.floating} onClick={cleanDb}>
+                    <DeleteIcon />
+                </Fab>
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    open={open}
+                    autoHideDuration={6000}
+                    onClose={handleClose}
+                    ContentProps={{
+                        'aria-describedby': 'message-id',
+                    }}
+                    message={<span id="message-id">{message}</span>}
+                    action={[
+                    <IconButton
+                        key="close"
+                        aria-label="close"
+                        color="inherit"
+                        className={classes.close}
+                        onClick={handleClose}
+                    >
+                        <CloseIcon />
+                    </IconButton>,
+                    ]}
+                />
             </div>
         </div>
     );
