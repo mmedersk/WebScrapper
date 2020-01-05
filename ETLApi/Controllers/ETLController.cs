@@ -63,7 +63,6 @@ namespace ETLApi.Controllers
             }
         }
 
-
         [Route("api/ETL/fulletl")]
         [HttpGet]
         public IHttpActionResult FullETL(JsonBodyModel model)

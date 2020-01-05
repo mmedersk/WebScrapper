@@ -11,6 +11,9 @@ namespace ETLHandler
 {
     public class TransformationHandler
     {
+        private static readonly char[] _polishChars = { 'ą', 'ć', 'ę', 'ł', 'ń', 'ó', 'ś', 'ź', 'ż' };
+        private static readonly char[] _englishChars = { 'a', 'c', 'e', 'l', 'n', 'o', 's', 'z', 'z' };
+
         public List<ListingItemModel> GetListOfProducts(bool needSave, List<string> rawHtmlList)
         {
             var results = new List<ListingItemModel>();
@@ -100,28 +103,28 @@ namespace ETLHandler
 
             try
             {
-                offer.Title = title.Descendants("h1")
+                offer.Title = RemoveDiacritics(title.Descendants("h1")
                     .Where(x => x.GetAttributeValue("class", "")
-                        .Equals("css-1ld8fwi")).Single().InnerText;
+                        .Equals("css-1ld8fwi")).Single().InnerText);
                 
-                offer.Address = title.Descendants("a")
+                offer.Address = RemoveDiacritics(title.Descendants("a")
                     .Where(x => x.GetAttributeValue("class", "")
-                        .Equals("css-12hd9gg")).Single().InnerText;
+                        .Equals("css-12hd9gg")).Single().InnerText);
 
-                offer.Price = title.Descendants("div")
+                offer.Price = RemoveDiacritics(title.Descendants("div")
                     .Where(x => x.GetAttributeValue("class", "")
-                        .Equals("css-1vr19r7")).Single().InnerText;
+                        .Equals("css-1vr19r7")).Single().InnerText);
 
-                offer.Area = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Powierzchnia"))?.FirstChild.NextSibling.InnerText ?? "Brak Informacji";
+                offer.Area = RemoveDiacritics(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Powierzchnia"))?.FirstChild.NextSibling.InnerText) ?? "Brak Informacji";
                 offer.Bond = ToIntFromString(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Kaucja"))?.FirstChild.NextSibling.InnerText);
-                offer.BuildingType = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Rodzaj zabudowy"))?.FirstChild.NextSibling.InnerText ?? "Brak Informacji";
+                offer.BuildingType = RemoveDiacritics(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Rodzaj zabudowy"))?.FirstChild.NextSibling.InnerText) ?? "Brak Informacji";
                 offer.BuiltIn = ToIntFromString(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Rok budowy"))?.FirstChild.NextSibling.InnerText);
                 offer.Floor = ToIntFromString(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Piętro"))?.FirstChild.NextSibling.InnerText);
                 offer.FloorsInBuilding = ToIntFromString(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Liczba pięter"))?.FirstChild.NextSibling.InnerText);
-                offer.HeatingType = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Ogrzewanie"))?.FirstChild.NextSibling.InnerText ?? "Brak Informacji";
-                offer.Materials = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Materiał budynku"))?.FirstChild.NextSibling.InnerText ?? "Brak Informacji";
+                offer.HeatingType = RemoveDiacritics(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Ogrzewanie"))?.FirstChild.NextSibling.InnerText) ?? "Brak Informacji";
+                offer.Materials = RemoveDiacritics(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Materiał budynku"))?.FirstChild.NextSibling.InnerText) ?? "Brak Informacji";
                 offer.Rooms = ToIntFromString(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Liczba pokoi"))?.FirstChild.NextSibling.InnerText);
-                offer.Windows = details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Okna"))?.FirstChild.NextSibling.InnerText ?? "Brak Informacji";
+                offer.Windows = RemoveDiacritics(details.ChildNodes.SingleOrDefault(li => li.InnerHtml.Contains("Okna"))?.FirstChild.NextSibling.InnerText) ?? "Brak Informacji";
             }
             catch
             {
@@ -155,6 +158,26 @@ namespace ETLHandler
 
             Int32.TryParse(stringNoLeters.ToString(), out var result);
             return result;
+        }
+
+        private string RemoveDiacritics(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return null;
+
+            var chars = text.ToCharArray();
+            var index = 0;
+
+            foreach (char c in chars)
+            {
+                if (_polishChars.Contains(c))
+                {
+                    chars[index] = _englishChars[Array.IndexOf(_polishChars, c)];
+                }
+                index++;
+            }
+
+            return new String(chars);
         }
 
         private void SaveTransformedResults(List<ListingItemModel> results)
