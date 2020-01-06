@@ -195,6 +195,5 @@ namespace ETLHandler
                 sw.Write(JsonConvert.SerializeObject(results, Formatting.Indented));
             }
         }
-        
     }
 }

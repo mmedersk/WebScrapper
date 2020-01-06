@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Web.Http;
 using CommonItems;
 using WebScrapper;
-using System.Diagnostics;
-using System.Threading;
 
 namespace ETLApi.Controllers
 {
@@ -90,12 +87,12 @@ namespace ETLApi.Controllers
 
         [Route("api/ETL/exportToCsv")]
         [HttpPost]
-        public IHttpActionResult ExportToCSV(List<ListingItemModel> offers)
+        public IHttpActionResult ExportToCSV()
         {
             try
             {
                 var csvHelper = new CSVHandler();
-                csvHelper.ExportToCSV(offers);
+                csvHelper.ExportToCSV();
 
                 return Ok();
             }
@@ -138,7 +135,6 @@ namespace ETLApi.Controllers
                 return InternalServerError(ex);
             }
         }
-
     }
 
     public class JsonBodyModel

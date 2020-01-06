@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using CommonItems;
-using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Data.SqlClient;
 
@@ -13,17 +7,24 @@ namespace WebScrapper
 {
     public class DatabaseHandler
     {
-
-        //TODO: Wrzucic oferty do DB i zwrocic tylko te oferty ktore zostaly wrzucone do DB (bez duplikatow)
         public List<ListingItemModel> Load()
         {
-            
             Process.Start("C:\\WebScrapper/DataBase/FunkcjeBazyDanych/Load_i_Merge.exe");
             System.Threading.Thread.Sleep(5000);
 
+            return GetAllOffersFromDB();
+        }
+
+        public void CleanDb()
+        {
+            Process.Start("C:\\WebScrapper/DataBase/FunkcjeBazyDanych/Delete_Table.exe");
+        }
+
+        public List<ListingItemModel> GetAllOffersFromDB()
+        {
             string connetionString;
             SqlConnection cnn;
-            
+
             connetionString = @"Server=LAPTOP-8Q8KV00E;Database=SCRAPERBASE;Integrated Security=True;";
             cnn = new SqlConnection(connetionString);
             cnn.Open();
@@ -50,31 +51,9 @@ namespace WebScrapper
 
                 results.Add(f);
             }
-
             cnn.Close();
-            //var result = GetOffersFromJson();
+
             return results;
         }
-
-        public void CleanDb()
-        {
-            Process.Start("C:\\WebScrapper/DataBase/FunkcjeBazyDanych/Delete_Table.exe");
-        }
-
-        //TODO: zaczytac wszystkie recordy z DB i zwrocic jako liste
-        private List<ListingItemModel> GetOffersFromJson()
-        {
-            var offers = new List<ListingItemModel>();
-            var pathToOffers = "C:\\SCRAPPER\\dane.json";
-
-            using (StreamReader sr = File.OpenText(pathToOffers))
-            {
-                var json = sr.ReadToEnd();
-                offers = JsonConvert.DeserializeObject<List<ListingItemModel>>(json);
-                return offers;
-            }
-        }
-
-        
     }
 }

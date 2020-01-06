@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using CommonItems;
 using CsvHelper;
@@ -9,9 +8,14 @@ namespace WebScrapper
 {
     public class CSVHandler
     {
-
-        public void ExportToCSV(List<ListingItemModel> offers)
+        public void ExportToCSV()
         {
+            var dbHandler = new DatabaseHandler();
+            var offers = dbHandler.GetAllOffersFromDB();
+            if (offers == null)
+            {
+                throw new Exception("Nothing in DataBase");
+            }
             var pathToFile = GetPathToFile("ExportedData.csv");
 
             using (var writer = new StreamWriter(pathToFile))
