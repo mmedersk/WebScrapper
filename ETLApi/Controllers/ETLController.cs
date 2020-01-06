@@ -51,11 +51,10 @@ namespace ETLApi.Controllers
         {
             try
             {
-                var dbHandler = new DatabaseHandler(null);
+                var dbHandler = new DatabaseHandler();
                 var offersInDb = dbHandler.Load();
 
                 var cleaningHandler = new CleaningHandler();
-                Thread.Sleep(5000);
                 cleaningHandler.DeleteArtifacts();
 
                 return Ok(offersInDb);
@@ -78,7 +77,7 @@ namespace ETLApi.Controllers
                 var transformer = new ETLHandler.TransformationHandler();
                 var transformationResults = transformer.GetListOfProducts(needSave: false, rawHtmlList: htmlFiles);
 
-                var dbHandler = new DatabaseHandler(transformationResults);
+                var dbHandler = new DatabaseHandler();
                 var offersInDb = dbHandler.Load();
 
                 return Ok(offersInDb);
@@ -140,23 +139,6 @@ namespace ETLApi.Controllers
             }
         }
 
-        [Route("api/ETL/getAllRecords")]
-        [HttpGet]
-        public IHttpActionResult GetAllRecords()
-        {
-            try
-            {
-                var dbHandler = new DatabaseHandler();
-                var results = dbHandler.GetAllRecords();
-
-                return Ok(results);
-            }
-            catch (Exception ex)
-            {
-                return InternalServerError(ex);
-            }
-
-        }
     }
 
     public class JsonBodyModel
