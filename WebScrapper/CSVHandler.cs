@@ -12,7 +12,7 @@ namespace WebScrapper
         {
             var dbHandler = new DatabaseHandler();
             var offers = dbHandler.GetAllOffersFromDB();
-            if (offers == null)
+            if (offers.Count == 0)
             {
                 throw new Exception("Nothing in DataBase");
             }

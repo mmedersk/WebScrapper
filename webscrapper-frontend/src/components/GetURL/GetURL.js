@@ -192,13 +192,8 @@ export default function GetURL() {
     }
 
     function exportToCsv() {
-        const data = JSON.parse(JSON.stringify(details));
-        data.map(item => {
-            delete item.tableData;
-        })
-        axios.post('http://localhost:54985/api/etl/exportToCsv', data, {
-            headers: {'Content-Type':'application/json'},
-        })
+        debugger;
+        axios.post('http://localhost:54985/api/etl/exportToCsv')
         .then((response) => {
             if(response.status === 200){
                 setT(true);
@@ -209,6 +204,8 @@ export default function GetURL() {
         .catch((error) => {
             console.log(error);
             setLoader(false);
+            handleClick();
+            setMessage("Empty database, nothing to export.");
         });
     }
 
@@ -271,7 +268,7 @@ export default function GetURL() {
                     <Button variant="contained" color="primary" className={classes.button} onClick={fullETLProcess}>
                         ETL
                     </Button> 
-                    <Button variant="contained" disabled={e} color="primary" className={classes.button} onClick={exportToCsv}>
+                    <Button variant="contained" color="primary" className={classes.button} onClick={exportToCsv}>
                         Export to .csv
                     </Button> 
                 </div>
@@ -282,7 +279,7 @@ export default function GetURL() {
                 <Transformed transformed={transfrom}/>
                 <Details details={details} visible={showData}/>
                 <Fab color="secondary" className={classes.floating} onClick={cleanDb}>
-                    {/* <DeleteIcon /> */}
+                    clean
                 </Fab>
                 <Snackbar
                     anchorOrigin={{
@@ -304,7 +301,7 @@ export default function GetURL() {
                         className={classes.close}
                         onClick={handleClose}
                     >
-                        {/* <CloseIcon /> */}
+                        ✖
                     </IconButton>,
                     ]}
                 />
