@@ -4,6 +4,7 @@ using System.Web.Http;
 using CommonItems;
 using WebScrapper;
 using System.Diagnostics;
+using System.Threading;
 
 namespace ETLApi.Controllers
 {
@@ -48,13 +49,14 @@ namespace ETLApi.Controllers
         [HttpGet]
         public IHttpActionResult Load()
         {
-             Process.Start("C://WebScrapper/DataBase/FunkcjeBazyDanych/Load_i_Merge.exe");
             try
             {
                 var dbHandler = new DatabaseHandler(null);
                 var offersInDb = dbHandler.Load();
 
                 var cleaningHandler = new CleaningHandler();
+                Thread.Sleep(5000);
+                cleaningHandler.DeleteArtifacts();
 
                 return Ok(offersInDb);
             }
