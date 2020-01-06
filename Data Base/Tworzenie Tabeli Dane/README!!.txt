@@ -1,0 +1,1 @@
+Zanim uruchomimy Tabela_DANE.exe, Tworzenie_tabeli_DANE.sql umieścić według ścieżki: C:\\Tworzenie_tabeli_DANE.sql czyli bezpośrednio na dysku C!!!!
