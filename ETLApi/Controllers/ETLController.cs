@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Web.Http;
 using CommonItems;
 using WebScrapper;
+using System.Diagnostics;
 
 namespace ETLApi.Controllers
 {
@@ -47,13 +48,13 @@ namespace ETLApi.Controllers
         [HttpGet]
         public IHttpActionResult Load()
         {
+             Process.Start("C://WebScrapper/DataBase/FunkcjeBazyDanych/Load_i_Merge.exe");
             try
             {
                 var dbHandler = new DatabaseHandler(null);
                 var offersInDb = dbHandler.Load();
 
                 var cleaningHandler = new CleaningHandler();
-                cleaningHandler.DeleteArtifacts();
 
                 return Ok(offersInDb);
             }
