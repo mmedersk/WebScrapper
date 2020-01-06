@@ -125,7 +125,6 @@ export default function GetURL() {
     }
 
     function getAfterLoad() {
-        debugger;
         setLoader(true);
         axios.get('http://localhost:54985/api/etl/load')
         .then(response => {
@@ -222,6 +221,7 @@ export default function GetURL() {
                 setLoader(false);
                 handleClick();
                 setMessage("Database cleaned.");
+                setDetails([]);
             }
         })
         .catch(error => {

@@ -11,8 +11,8 @@ namespace ETLHandler
 {
     public class TransformationHandler
     {
-        private static readonly char[] _polishChars = { 'ą', 'ć', 'ę', 'ł', 'ń', 'ó', 'ś', 'ź', 'ż' };
-        private static readonly char[] _englishChars = { 'a', 'c', 'e', 'l', 'n', 'o', 's', 'z', 'z' };
+        private static readonly char[] _polishChars = { 'ą', 'ć', 'ę', 'ł', 'ń', 'ó', 'ś', 'ź', 'ż', '²' };
+        private static readonly char[] _englishChars = { 'a', 'c', 'e', 'l', 'n', 'o', 's', 'z', 'z', '2' };
 
         public List<ListingItemModel> GetListOfProducts(bool needSave, List<string> rawHtmlList)
         {
@@ -195,5 +195,6 @@ namespace ETLHandler
                 sw.Write(JsonConvert.SerializeObject(results, Formatting.Indented));
             }
         }
+        
     }
 }
