@@ -32,13 +32,13 @@ namespace WebScrapper
         //TODO: Wrzucic oferty do DB i zwrocic tylko te oferty ktore zostaly wrzucone do DB (bez duplikatow)
         public List<ListingItemModel> Load()
         {
-            Process.Start("C:\\WebScrapper\Data Base\Funkcje Bazy Danych\Load_i_Merge.exe");
+            Process.Start("C:\\WebScrapper/DataBase/FunkcjeBazyDanych/Load_i_Merge.exe");
             return _offers;
         }
 
         public void CleanDb()
         {
-            Process.Start("C:\\WebScrapper\Data Base\Funkcje Bazy Danych\Delete_Table.exe");
+            Process.Start("C:\\WebScrapper/DataBase/FunkcjeBazyDanych/Delete_Table.exe");
         }
 
         //TODO: zaczytac wszystkie recordy z DB i zwrocic jako liste

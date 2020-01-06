@@ -1,8 +1,8 @@
 import React , { useState } from 'react';
 import { TextField, Button, Fab, Snackbar, IconButton} from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import DeleteIcon from '@material-ui/icons/Delete';
-import CloseIcon from '@material-ui/icons/Close';
+// import DeleteIcon from '@material-ui/icons/Delete';
+// import CloseIcon from '@material-ui/icons/Close';
 import Transformed from '../transformed/Transformed';
 import Extract from '../extract/Extract';
 import Details from '../details/Details';
@@ -125,6 +125,7 @@ export default function GetURL() {
     }
 
     function getAfterLoad() {
+        debugger;
         setLoader(true);
         axios.get('http://localhost:54985/api/etl/load')
         .then(response => {
@@ -281,7 +282,7 @@ export default function GetURL() {
                 <Transformed transformed={transfrom}/>
                 <Details details={details} visible={showData}/>
                 <Fab color="secondary" className={classes.floating} onClick={cleanDb}>
-                    <DeleteIcon />
+                    {/* <DeleteIcon /> */}
                 </Fab>
                 <Snackbar
                     anchorOrigin={{
@@ -303,7 +304,7 @@ export default function GetURL() {
                         className={classes.close}
                         onClick={handleClose}
                     >
-                        <CloseIcon />
+                        {/* <CloseIcon /> */}
                     </IconButton>,
                     ]}
                 />
