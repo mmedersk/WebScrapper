@@ -162,8 +162,4 @@ namespace ETLApi.Controllers
         public string url_adress { get; set; }
     }
 
-    class ResultModel
-    {
-        public string HtmlResult { get; set; }
-    }
 }
